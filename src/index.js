@@ -9,6 +9,11 @@ const persons = [
     { name: 'Lea Kutvonen', number: '040 123456' }
 ]
 
+app.get('/info', (req, res) => {
+    const current = new Date()
+    res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${current}</p>`)
+})
+
 app.get('/api/persons', (req, res) => {
     res.json(persons)
 })
