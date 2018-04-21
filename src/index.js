@@ -11,9 +11,7 @@ let persons = [
     { id: 3, name: 'Lea Kutvonen', number: '040 123456' }
 ]
 
-function getRandomInt() {
-    return Math.floor(Math.random() * Math.floor(10000000));
-}
+const getRandomInt = () => Math.floor(Math.random() * Math.floor(10000000))
 
 app.use(bodyParser.json())
 
@@ -35,7 +33,14 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const person = {...request.body, id: getRandomInt()}
+    const body = request.body
+    if (body.name === undefined || body.number === undefined) {
+        return response.status(400).json({error: 'content missing'})
+    }
+    const person = {...body, id: getRandomInt()}
+    if (persons.find(p => p.name === person.name)) {
+        return response.status(409).json({error: 'person already exists'})
+    }
     persons = persons.concat(person)
     response.json(person)
 })
