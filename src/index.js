@@ -1,5 +1,7 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+
 const PORT = 3001
 
 let persons = [
@@ -9,9 +11,14 @@ let persons = [
     { id: 3, name: 'Lea Kutvonen', number: '040 123456' }
 ]
 
+function getRandomInt() {
+    return Math.floor(Math.random() * Math.floor(10000000));
+}
+
+app.use(bodyParser.json())
+
 app.get('/info', (req, res) => {
-    const current = new Date()
-    res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${current}</p>`)
+    res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${new Date()}</p>`)
 })
 
 app.get('/api/persons', (req, res) => {
@@ -19,8 +26,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
+    const person = persons.find(person => person.id === Number(request.params.id))
     if (person) {
         response.json(person)
     } else {
@@ -28,9 +34,14 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.post('/api/persons', (request, response) => {
+    const person = {...request.body, id: getRandomInt()}
+    persons = persons.concat(person)
+    response.json(person)
+})
+
 app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
+    persons = persons.filter(person => person.id !== Number(request.params.id))
     response.status(204).end()
 })
 
