@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const PORT = 3001
 
@@ -17,6 +18,7 @@ const getRandomInt = () => Math.floor(Math.random() * Math.floor(10000000))
 morgan.token('body', (req) => JSON.stringify(req.body))
   
 app.use(bodyParser.json())
+app.use(cors())
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
 app.get('/info', (req, res) => {
