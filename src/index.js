@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 
-const PORT = process.env.PORT || 3001
+const PORT = 3001
 
 let persons = [
     { id: 0, name: 'Arto Hellas', number: '040 123456' },
@@ -21,6 +21,10 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(express.static('build'))
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
+
+app.get('/', (req, res) => {
+    res.sendFile('build/index.html')
+})
 
 app.get('/info', (req, res) => {
     res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${new Date()}</p>`)
