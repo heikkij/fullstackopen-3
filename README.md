@@ -1,3 +1,3 @@
 fullstackopen 3
 
-https://personbackend-nhcqcairkk.now.sh/
+https://personbackend-rjatzgcqnk.now.sh
