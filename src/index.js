@@ -8,15 +8,16 @@ const PORT = 3001
 let persons = [
     { id: 0, name: 'Arto Hellas', number: '040 123456' },
     { id: 1, name: 'Martti Tienari', number: '040 123456' },
-        { id: 2, name: 'Arto Järvinen', number: '040 123456' },
+    { id: 2, name: 'Arto Järvinen', number: '040 123456' },
     { id: 3, name: 'Lea Kutvonen', number: '040 123456' }
 ]
 
 const getRandomInt = () => Math.floor(Math.random() * Math.floor(10000000))
 
+morgan.token('body', (req) => JSON.stringify(req.body))
+  
 app.use(bodyParser.json())
-
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
 app.get('/info', (req, res) => {
     res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${new Date()}</p>`)
