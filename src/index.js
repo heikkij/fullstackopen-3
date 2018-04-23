@@ -35,6 +35,9 @@ app.get('/info', (req, res) => {
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons.map(Person.format))
+    }).catch(error => {
+        console.log(error)
+        response.status(404).end()
     })
 })
 
@@ -59,12 +62,18 @@ app.post('/api/persons', (request, response) => {
     const person = new Person({ ...body, id: getRandomInt() })
     person.save().then(savedPerson => {
         response.json(Person.format(savedPerson))
+    }).catch(error => {
+        console.log(error)
+        response.status(404).end()
     })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    persons = persons.filter(person => person.id !== Number(request.params.id))
-    response.status(204).end()
+    Person.findByIdAndRemove(request.params.id).then(result => {
+        response.status(204).end()
+    }).catch(error => {
+        response.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 app.listen(PORT, () => {
