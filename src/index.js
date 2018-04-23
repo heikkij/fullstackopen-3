@@ -34,8 +34,8 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
-    res.json(persons)
-})
+        res.json(persons.map(Person.format))
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {

@@ -7,9 +7,19 @@ const url = `mongodb://${webuser}:${webpassword}@ds253959.mlab.com:53959/fullsta
 
 mongoose.connect(url)
 
-const Person = mongoose.model('Person', {
+const personSchema = mongoose.Schema({
     name: String,
     number: String,
 })
+
+personSchema.statics.format = (person) => {
+    return {
+        id: person._id,
+        name: person.name,
+        number: person.number,
+    }
+}
+
+const Person = mongoose.model('Person', personSchema)
 
 module.exports = Person
