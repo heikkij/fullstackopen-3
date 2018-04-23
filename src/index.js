@@ -52,12 +52,13 @@ app.post('/api/persons', (request, response) => {
     if (body.name === undefined || body.number === undefined) {
         return response.status(400).json({error: 'content missing'})
     }
-    const person = {...body, id: getRandomInt()}
-    if (persons.find(p => p.name === person.name)) {
-        return response.status(409).json({error: 'person already exists'})
+    if (persons.find(p => p.name === body.name)) {
+        return response.status(409).json({ error: 'person already exists' })
     }
-    persons = persons.concat(person)
-    response.json(person)
+    const person = new Person({ ...body, id: getRandomInt() })
+    person.save().then(saved => {
+        response.json(saved)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
