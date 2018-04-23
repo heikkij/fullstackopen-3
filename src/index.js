@@ -8,15 +8,6 @@ const Person = require('./models/person')
 
 const PORT = 3001
 
-let persons = [
-    { id: 0, name: 'Arto Hellas', number: '040 123456' },
-    { id: 1, name: 'Martti Tienari', number: '040 123456' },
-    { id: 2, name: 'Arto Järvinen', number: '040 123456' },
-    { id: 3, name: 'Lea Kutvonen', number: '040 123456' }
-]
-
-const getRandomInt = () => Math.floor(Math.random() * Math.floor(10000000))
-
 morgan.token('body', (req) => JSON.stringify(req.body))
   
 app.use(bodyParser.json())
@@ -24,12 +15,17 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
-app.get('/', (req, res) => {
-    res.sendFile('build/index.html')
+app.get('/', (request, response) => {
+    response.sendFile('build/index.html')
 })
 
-app.get('/info', (req, res) => {
-    res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${new Date()}</p>`)
+app.get('/info', (request, response) => {
+    Person.count({}).then(count => {
+        response.send(`<p>puhelinluettelossa ${count} henkilön tiedot</p><p>${new Date()}</p>`)
+    }).catch(error => {
+        console.log(error)
+        response.status(404).end()
+    })
 })
 
 app.get('/api/persons', (req, res) => {
@@ -42,12 +38,13 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const person = persons.find(person => person.id === Number(request.params.id))
-    if (person) {
-        response.json(person)
-    } else {
+    const body = request.body
+    Person.findById(request.params.id).then(person => {
+        response.json(Person.format(person))
+    }).catch(error => {
+        console.log(error)
         response.status(404).end()
-    }
+    })
 })
 
 app.post('/api/persons', (request, response) => {
@@ -55,13 +52,9 @@ app.post('/api/persons', (request, response) => {
     if (body.name === undefined || body.number === undefined) {
         return response.status(400).json({error: 'content missing'})
     }
-    /* const person = {...body, id: getRandomInt()}
-    if (persons.find(p => p.name === person.name)) {
-        return response.status(409).json({error: 'person already exists'})
-    }*/
-    const person = new Person({ ...body, id: getRandomInt() })
-    person.save().then(savedPerson => {
-        response.json(Person.format(savedPerson))
+    const person = new Person(Person.format(body))
+    person.save().then(saved => {
+        response.json(Person.format(saved))
     }).catch(error => {
         console.log(error)
         response.status(404).end()
