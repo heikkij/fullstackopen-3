@@ -9,7 +9,7 @@ console.log(url)
 
 mongoose.connect(url)
 
-const Identity = mongoose.model('Identity', {
+const Person = mongoose.model('Person', {
     name: String,
     number: String,
 })
@@ -19,17 +19,17 @@ const number = process.argv[3]
 
 if (name && number) {
     console.log(`lisätään henkilö ${name} numero ${number} luetteloon`)
-    const identity = new Identity({
+    const person = new Person({
         name,
         number,
     })
-    identity.save().then(response => {
+    person.save().then(response => {
         mongoose.connection.close()
     })
 } else {
     console.log('puhelinluettelo:')
-    Identity.find({}).then(identities => {
-        identities.forEach(identity => console.log(`${identity.name} ${identity.number}`))
+    Person.find({}).then(people => {
+        people.forEach(identity => console.log(`${identity.name} ${identity.number}`))
         mongoose.connection.close()
     })
 }
