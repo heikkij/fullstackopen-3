@@ -52,9 +52,17 @@ app.post('/api/persons', (request, response) => {
     if (body.name === undefined || body.number === undefined) {
         return response.status(400).json({error: 'content missing'})
     }
-    const person = new Person(Person.format(body))
-    person.save().then(saved => {
-        response.json(Person.format(saved))
+    Person.count({name: body.name}).then(count => {
+        if (count) {
+            return response.status(400).json({error: 'person already exists'})
+        }
+        const person = new Person(Person.format(body))
+        person.save().then(saved => {
+            response.json(Person.format(saved))
+        }).catch(error => {
+            console.log(error)
+            response.status(404).end()
+        })
     }).catch(error => {
         console.log(error)
         response.status(404).end()
