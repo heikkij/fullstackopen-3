@@ -1,11 +1,14 @@
 const mongoose = require('mongoose')
 
-const webuser = process.env.webuser
-const webpassword = process.env.webpassword
+if ( process.env.NODE_ENV !== 'production' ) {
+    require('dotenv').config()
+}
+  
+const url = process.env.MONGODB_URI
 
-const url = `mongodb://${webuser}:${webpassword}@ds253959.mlab.com:53959/fullstackopen`
-
-mongoose.connect(url)
+mongoose.connect(url).catch(error => {
+    console.log(error)
+})
 
 const personSchema = mongoose.Schema({
     name: String,
