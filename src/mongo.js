@@ -10,26 +10,26 @@ console.log(url)
 mongoose.connect(url)
 
 const Person = mongoose.model('Person', {
-    name: String,
-    number: String,
+  name: String,
+  number: String,
 })
 
 const name = process.argv[2]
 const number = process.argv[3]
 
 if (name && number) {
-    console.log(`lisätään henkilö ${name} numero ${number} luetteloon`)
-    const person = new Person({
-        name,
-        number,
-    })
-    person.save().then(response => {
-        mongoose.connection.close()
-    })
+  console.log(`lisätään henkilö ${name} numero ${number} luetteloon`)
+  const person = new Person({
+    name,
+    number,
+  })
+  person.save().then(
+    mongoose.connection.close()
+  )
 } else {
-    console.log('puhelinluettelo:')
-    Person.find({}).then(people => {
-        people.forEach(identity => console.log(`${identity.name} ${identity.number}`))
-        mongoose.connection.close()
-    })
+  console.log('puhelinluettelo:')
+  Person.find({}).then(people => {
+    people.forEach(identity => console.log(`${identity.name} ${identity.number}`))
+    mongoose.connection.close()
+  })
 }
